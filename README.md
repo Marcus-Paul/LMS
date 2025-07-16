@@ -53,6 +53,16 @@ LMS/
 │ ├── Library Management Triggers.sql
 │ ├── library management events.sql
 
+## Planned Features
+
+### Admin-only Book Management
+
+- The system will implement **basic role-based access control (RBAC)** with `ADMIN` and `MEMBER` roles.
+- Only admins will be able to add new books; members will have view-only access.
+- Since this is a **console-based project**, user roles and permissions will be managed through simple login checks and menu options.
+- This is one of my first projects, and I’m focusing on building core functionality while learning Java and JDBC.
+
+
 
 ## 👨💻 Author
 
