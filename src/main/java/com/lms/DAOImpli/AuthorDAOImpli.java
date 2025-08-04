@@ -1,9 +1,7 @@
 package com.lms.DAOImpli;
 
 import com.lms.DAO.AuthorsDAO;
-import com.lms.DB_Connection.DBConnection;
 import com.lms.TableClassess.Authors;
-import com.lms.TableClassess.Books;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

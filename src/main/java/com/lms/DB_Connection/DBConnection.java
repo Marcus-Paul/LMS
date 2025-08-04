@@ -7,8 +7,8 @@ import java.sql.Statement;
 
 public class DBConnection {
     private static String url = "jdbc:mysql://localhost:3306/lms";
-    private static String userName = "your username";
-    private static String password = "your db password";
+    private static String userName = "Your DB UserName";
+    private static String password = "Your DB Password";
 
     public static Connection getConnection() throws Exception {
         Class.forName("com.mysql.cj.jdbc.Driver");
