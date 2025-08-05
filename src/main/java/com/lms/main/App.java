@@ -184,7 +184,7 @@ public class App {
 									case 2:
 										System.out.print("Enter Book ID: ");
 										bookId = sc.nextInt();
-										authorDAO.getAuthorByID(bookId);
+										bookDAO.getBookById(bookId);
 									break;
 									case 3:
 										System.out.println("List of Books: ");
