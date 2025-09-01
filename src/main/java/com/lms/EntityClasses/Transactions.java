@@ -1,30 +1,64 @@
-package com.lms.TableClassess;
+package com.lms.EntityClasses;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "transactions")
 public class Transactions {
+	
+	@Id
+	@Column(name = "transaction_id")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
     private int transactionId;
-    private int membershipId;
-    private int bookId;
+	
+	@ManyToOne
+	@JoinColumn(name = "membership_id")
+    private Member member;
+	
+	@ManyToOne
+	@JoinColumn(name = "book_id")
+    private Book book;
+	
+	@Column(name = "issue_date")
     private String issuedDate;
+	
+	@Column(name = "due_date")
     private String dueDate;
+	
+	@Column(name = "return_date")
     private String returnDate;
+	
+	@Column(name = "late_fee")
     private int lateFee;
 
-    public Transactions(int transactionId, int membershipId, int bookId, String issuedDate, String dueDate, String returnDate, int lateFee) {
+    public Transactions(int transactionId, Member member, Book book, String issuedDate, String dueDate, String returnDate, int lateFee) {
         this.transactionId = transactionId;
-        this.membershipId = membershipId;
-        this.bookId = bookId;
+        this.member = member;
+        this.book = book;
         this.issuedDate = issuedDate;
         this.dueDate = dueDate;
         this.returnDate = returnDate;
         this.lateFee = lateFee;
     }
 
-    public Transactions(int membershipId, int bookId, String issuedDate, String dueDate, String returnDate) {
-        this.membershipId = membershipId;
-        this.bookId = bookId;
+    public Transactions(Member member, Book book, String issuedDate, String dueDate, String returnDate) {
+        this.member = member;
+        this.book = book;
         this.issuedDate = issuedDate;
         this.dueDate = dueDate;
         this.returnDate = returnDate;
+    }
+    
+    public Transactions(Member member, Book book) {
+        this.member = member;
+        this.book = book;
     }
 
     public Transactions(){}
@@ -37,20 +71,20 @@ public class Transactions {
         this.transactionId = transactionId;
     }
 
-    public int getMembershipId() {
-        return membershipId;
+    public Member getMember() {
+        return member;
     }
 
-    public void setMembershipId(int membershipId) {
-        this.membershipId = membershipId;
+    public void setMember(Member membershipId) {
+        this.member = membershipId;
     }
 
-    public int getBookId() {
-        return bookId;
+    public Book getBook() {
+        return book;
     }
 
-    public void setBookId(int bookId) {
-        this.bookId = bookId;
+    public void setBook(Book book) {
+        this.book = book;
     }
 
     public String getIssuedDate() {
@@ -89,8 +123,8 @@ public class Transactions {
     public String toString() {
         return "Transactions{" +
                 "transactionId=" + transactionId +
-                ", membershipId=" + membershipId +
-                ", bookId=" + bookId +
+                ", membershipId=" + member +
+                ", bookId=" + book +
                 ", issuedDate='" + issuedDate + '\'' +
                 ", dueDate='" + dueDate + '\'' +
                 ", returnDate='" + returnDate + '\'' +

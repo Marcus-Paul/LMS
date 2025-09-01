@@ -1,16 +1,13 @@
 package com.lms.main;
 import com.lms.Auth.AuthService;
 import com.lms.DAO.*;
-import com.lms.DAOImpli.*;
-import com.lms.DB_Connection.DBConnection;
-import com.lms.TableClassess.*;
+import com.lms.DAOImpl.*;
+import com.lms.EntityClasses.*;
 
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.util.List;
 import java.util.Scanner;
 
-import javax.management.relation.Role;
 
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
@@ -18,27 +15,24 @@ public class App {
     public static void main(String[] args) {
     	
     	Scanner sc = new Scanner(System.in);
-    	Authors author = new Authors();
-    	Books book = new Books();
+    	Author author = new Author();
+    	Book book = new Book();
     	Category category = new Category();
-    	Members members = new Members();
+    	Member members = new Member();
     	Transactions transactions = new Transactions();
-    	Reservation reservation = new Reservation();
-    	Roles role = new Roles();
-    	Users users = new Users();
-    	UserRole userRole = new UserRole();
+    	Role role = new Role();
         String fName, lName;
         int authId;
-        String bookName, publishDate;
+        String bookName, publishDate, status;
         int bookId,totalCopies, availableCopies, categoryId;
         String categoryName;
         int membershipId;
         String membfName, memblName, phoneNum;
         int transactionID;
-        String issueDate, dueDate, returnDate;
+        String returnDate;
         int roleID;
         String roleName;
-        int userId;
+        int roleId, userId;
         String userEmail, userPassword;
         boolean enabled;
         
@@ -46,16 +40,14 @@ public class App {
     	
     	try {
     	
-			Connection connection = DBConnection.getConnection();
-		    BooksDAO bookDAO = new BooksDAOImpli(connection);
-		    CategoryDAO categoryDAO = new CategoryDAOImpli(connection);
-		    MembersDAO membersDAO = new MembersDAOImpli(connection);
-		    ReservationDAO reservationDAO = new ReservationDAOImpli(connection);
-		    RolesDAO rolesDAO = new RoleDAOImpli(connection);
-	        TransactionDAO transactionDAO = new TransactionDAOImpli(connection);
-	        UserDAO userDAO = new UserDAOImpli(connection);
-	        UserRoleDAO userRoleDAO = new UserRoleDAOImpli(connection);
-	        AuthorsDAO authorDAO = new AuthorDAOImpli(connection);
+		    BookDAO bookDAO = new BooksDAOImpl();
+		    CategoryDAO categoryDAO = new CategoryDAOImpl();
+		    MemberDAO membersDAO = new MembersDAOImpl();
+		    ReservationDAO reservationDAO = new ReservationDAOImpl();
+		    RoleDAO rolesDAO = new RoleDAOImpl();
+	        TransactionsDAO transactionDAO = new TransactionsDAOImpl();
+	        UserDAO userDAO = new UserDAOImpl();
+	        AuthorDAO authorDAO = new AuthorDAOImpl();
 	        
 	        
 	        
@@ -87,8 +79,7 @@ public class App {
 		    			    			+ "5. Reservations \n"
 		    			    			+ "6. Transactions \n"
 		    			    			+ "7. Roles \n"
-		    			    			+ "8. Users \n"
-		    			    			+ "9. User_roles");
+		    			    			+ "8. Users \n");
 		    			    	
 		    			    	int option = sc.nextInt();
 		    			    	switch (option) {
@@ -112,6 +103,7 @@ public class App {
 										author.setFirstName(fName);
 										author.setLastName(lName);
 										authorDAO.addAuthor(author);
+										
 									break;
 									case 2:
 										System.out.print("Enter Author ID: ");
@@ -120,7 +112,7 @@ public class App {
 									break;
 									case 3:
 										System.out.println("List of Authors: ");
-										for(Authors auth : authorDAO.getAllAuthors()) {
+										for(Author auth : authorDAO.getAllAuthors()) {
 											System.out.println(auth);
 										}
 									break;
@@ -133,13 +125,13 @@ public class App {
 										authId = sc.nextInt();
 										author.setFirstName(fName);
 										author.setLastName(lName);
-										author.setAuthor_id(authId);
+										author.setAuthorId(authId);
 										authorDAO.updateAuthor(author);
 									break;
 									case 5:
 										System.out.println("Enter Author ID");
 										authId = sc.nextInt();
-										author.setAuthor_id(authId);
+										author.setAuthorId(authId);
 										authorDAO.deleteAuthor(author);
 									break;
 									default:
@@ -165,6 +157,7 @@ public class App {
 										bookName = sc.nextLine();
 										System.out.println("Enter Author ID: ");
 										authId = sc.nextInt();
+										sc.nextLine();
 										System.out.println("Enter Publish Date: ");
 										publishDate = sc.nextLine();
 										System.out.println("Enter Total copies: ");
@@ -173,13 +166,7 @@ public class App {
 										availableCopies = sc.nextInt();
 										System.out.println("Enter Category ID: ");
 										categoryId = sc.nextInt();
-										book.setBook_name(bookName);
-										book.setAuthor_id(authId);
-										book.setPublish_date(publishDate);
-										book.setTotal_copies(totalCopies);
-										book.setAvailable_copies(availableCopies);
-										book.setCategory_id(categoryId);
-										bookDAO.addBook(book);
+										bookDAO.addBook(bookName, authId, publishDate, totalCopies, availableCopies, categoryId);
 									break;
 									case 2:
 										System.out.print("Enter Book ID: ");
@@ -188,7 +175,7 @@ public class App {
 									break;
 									case 3:
 										System.out.println("List of Books: ");
-										for(Books books : bookDAO.getAllBooks()) {
+										for(Book books : bookDAO.getAllBooks()) {
 											System.out.println(books);
 										}
 									break;
@@ -208,20 +195,13 @@ public class App {
 										System.out.print("Enter Book ID: ");
 										bookId = sc.nextInt();
 										
-										book.setBook_name(bookName);
-										book.setAuthor_id(authId);
-										book.setPublish_date(publishDate);
-										book.setTotal_copies(totalCopies);
-										book.setAvailable_copies(availableCopies);
-										book.setCategory_id(categoryId);
-										book.setBook_id(bookId);
-										bookDAO.updateBook(book);
+										bookDAO.updateBook(bookId, bookName, authId, publishDate, totalCopies, availableCopies, categoryId);
 										
 									break;
 									case 5:
 										System.out.println("Enter Book ID");
 										bookId = sc.nextInt();
-										book.setBook_id(bookId);
+										book.setBookId(bookId);
 										bookDAO.deleteBook(book);
 									break;
 									default:
@@ -245,7 +225,7 @@ public class App {
 										System.out.print("Enter Category Name: ");
 										categoryName = sc.nextLine();
 									
-										category.setCategory_name(categoryName);
+										category.setCategoryName(categoryName);
 										categoryDAO.addCategory(category);
 									break;
 									case 2:
@@ -263,14 +243,14 @@ public class App {
 										System.out.print("Enter Category Name: ");
 										categoryName = sc.next();
 									
-										category.setCategory_name(categoryName);
+										category.setCategoryName(categoryName);
 										categoryDAO.updateCategory(category);
 
 									break;
 									case 5:
 										System.out.println("Enter Category ID");
 										categoryId = sc.nextInt();
-										book.setBook_id(categoryId);
+										book.setBookId(categoryId);
 										categoryDAO.deleteCategory(category);
 									break;
 									default:
@@ -311,7 +291,7 @@ public class App {
 									break;
 									case 3:
 										System.out.println("List of Members: ");
-										for(Members member : membersDAO.getAllMembers()) {
+										for(Member member : membersDAO.getAllMembers()) {
 											System.out.println(member);
 										}
 									break;
@@ -333,7 +313,7 @@ public class App {
 									case 5:
 										System.out.print("Enter Membership ID: ");
 										membershipId = sc.nextInt();
-										book.setBook_id(membershipId);
+										book.setBookId(membershipId);
 										membersDAO.deleteMember(members);
 									break;
 									default:
@@ -358,10 +338,8 @@ public class App {
 										System.out.println("Enter Book ID: ");
 										bookId = sc.nextInt();
 										
-										reservation.setMembership_id(membershipId);
-										reservation.setBook_id(bookId);
 										
-										reservationDAO.createReservation(reservation);
+										reservationDAO.createReservation(membershipId, bookId);
 									break;
 									case 2:
 										System.out.println("List of Resevtions: ");
@@ -375,10 +353,9 @@ public class App {
 										System.out.println("Enter Book ID: ");
 										bookId = sc.nextInt();
 										
-										reservation.setMembership_id(membershipId);
-										reservation.setBook_id(bookId);
+										status = sc.nextLine();
 										
-										reservationDAO.updateReservation(reservation);
+										reservationDAO.updateReservation(membershipId, bookId, status);
 
 									break;
 									
@@ -388,10 +365,8 @@ public class App {
 										System.out.println("Enter Book ID: ");
 										bookId = sc.nextInt();
 										
-										reservation.setMembership_id(membershipId);
-										reservation.setBook_id(bookId);
 										
-										reservationDAO.deleteReservation(reservation);
+										reservationDAO.deleteReservation(membershipId, bookId);
 
 									break;
 									default:
@@ -416,20 +391,9 @@ public class App {
 										membershipId = sc.nextInt();
 										System.out.print("Enter Book ID: ");
 										bookId = sc.nextInt();
-										System.out.println("Enter Issue Date");
-										issueDate = sc.nextLine();
-										System.out.println("Enter Due Date");
-										dueDate = sc.nextLine();
-										System.out.println("Enter Return Date");
-										returnDate = sc.nextLine();
 										
-										transactions.setMembershipId(membershipId);
-										transactions.setBookId(bookId);
-										transactions.setIssuedDate(issueDate);
-										transactions.setDueDate(dueDate);
-										transactions.setReturnDate(returnDate);
 										
-										transactionDAO.addTransaction(transactions);
+										transactionDAO.addTransaction(membershipId, bookId);
 									break;
 									case 2:
 										System.out.print("Enter Membership ID: ");
@@ -489,13 +453,13 @@ public class App {
 										System.out.println("Enter Role Name: ");
 										roleName = sc.nextLine();
 										
-										role.setRole_name(roleName);
+										role.setRoleName(roleName);
 										
-										rolesDAO.createRoles(role);
+										rolesDAO.createRole(role);
 									break;
 									case 2:
 										System.out.println("List of Roles: ");
-										for(Roles roles : rolesDAO.getAllRoles()) {
+										for(Role roles : rolesDAO.getAllRoles()) {
 											System.out.println(roles);
 										}
 									break;
@@ -504,9 +468,10 @@ public class App {
 										roleName = sc.nextLine();
 										System.out.println("Enter Role ID: ");
 										roleID = sc.nextInt();
+										sc.nextLine();
 										
-										role.setRole_name(roleName);
-										role.setRole_id(roleID);
+										role.setRoleName(roleName);
+										role.setRoleId(roleID);
 										
 										rolesDAO.updateRole(role);
 
@@ -516,9 +481,7 @@ public class App {
 										System.out.println("Enter Role ID: ");
 										roleID = sc.nextInt();
 										
-										role.setRole_id(roleID);
-										
-										rolesDAO.deleteRole(role);
+										rolesDAO.deleteRole(roleID);
 
 									break;
 									default:
@@ -548,17 +511,15 @@ public class App {
 										membershipId = sc.nextInt();
 										System.out.println("Is the account enabled: ");
 										enabled = sc.nextBoolean();
+										System.out.print("Enter Role ID: ");
+										roleId = sc.nextInt();
 										
-										users.setEmail(userEmail);
-										users.setPassword(userPassword);
-										users.setMembership_id(membershipId);
-										users.setEnabled(enabled);
+										userDAO.createUser(userEmail, userPassword, membershipId, enabled, roleId);
 										
-										userDAO.createUser(users);
 									break;
 									case 2:
 										System.out.println("List of Users: ");
-										for(Users user : userDAO.getAllUser()) {
+										for(User user : userDAO.getAllUser()) {
 											System.out.println(user);
 										}
 									break;
@@ -571,13 +532,15 @@ public class App {
 										membershipId = sc.nextInt();
 										System.out.println("Enter User ID: ");
 										userId = sc.nextInt();
+										System.out.println("Is the account enabled: ");
+										enabled = sc.nextBoolean();
 										
-										users.setEmail(userEmail);
-										users.setPassword(userPassword);
-										users.setMembership_id(membershipId);
-										users.setUser_id(userId);
+										System.out.print("Enter Role ID: ");
+										roleId = sc.nextInt();
 										
-										userDAO.updateUser(users);
+										userDAO.updateUser(userId, userEmail, userPassword, membershipId, enabled, roleId);
+										
+										
 
 									break;
 									
@@ -585,68 +548,8 @@ public class App {
 										System.out.println("Enter User ID: ");
 										userId = sc.nextInt();
 										
-										users.setUser_id(userId);
 										
-										userDAO.deleteUser(users);
-
-									break;
-									default:
-										System.out.println("Invalid Option");
-									break;
-										
-									}
-									
-									break;
-								case 9:
-									System.out.println("User_Role Operations");
-									System.out.println("1. Create User_Role \n"
-											+ "2. Get All User_Role \n"
-											+ "3. Update User_Role \n"
-											+ "4. Delete User_Role");
-									
-									int userRoleSelection = sc.nextInt();
-									
-									switch (userRoleSelection) {
-									case 1:
-										
-										System.out.println("Enter User ID: ");
-										userId = sc.nextInt();
-										System.out.println("Enter Role ID: ");
-										roleID = sc.nextInt();
-										
-										
-										userRole.setRole_id(roleID);
-										userRole.setUser_id(userId);
-										
-										userRoleDAO.insertUserRole(userRole);
-									break;
-									case 2:
-										System.out.println("List of Users Roles: ");
-										for(UserRole userRoles : userRoleDAO.getAllUserRole()) {
-											System.out.println(userRoles);
-										}
-									break;
-									case 3:
-										System.out.println("Enter User ID: ");
-										userId = sc.nextInt();
-										System.out.println("Enter Role ID: ");
-										roleID = sc.nextInt();
-										
-										
-										userRole.setRole_id(roleID);
-										userRole.setUser_id(userId);
-										
-										userRoleDAO.updateRole(userRole);
-
-									break;
-									
-									case 4:
-										System.out.println("Enter User ID: ");
-										userId = sc.nextInt();
-										
-										userRole.setUser_id(userId);
-										
-										userRoleDAO.deleteRole(userRole);
+										userDAO.deleteUser(userId);
 
 									break;
 									default:
@@ -680,15 +583,15 @@ public class App {
 		    			    			break;
 		    			    		case 2:
 		    			    			System.out.println("All The available books");
-		    			    			List<Books> listOfBooks = bookDAO.getAllBooks();
-		    			    			for(Books books : listOfBooks) {
+		    			    			List<Book> listOfBooks = bookDAO.getAllBooks();
+		    			    			for(Book books : listOfBooks) {
 		    			    				System.out.println(books);
 		    			    			}
 		    			    			break;
 		    			    		case 3:
 		    			    			System.out.println("All The available Authors");
-		    			    			List<Authors> listOfAuthors = authorDAO.getAllAuthors();
-		    			    			for(Authors authors : listOfAuthors) {
+		    			    			List<Author> listOfAuthors = authorDAO.getAllAuthors();
+		    			    			for(Author authors : listOfAuthors) {
 		    			    				System.out.println(authors);
 		    			    			}
 		    			    			break;
@@ -697,15 +600,13 @@ public class App {
 		    			    			authorDAO.getAuthorByID(sc.nextInt());
 		    			    			break;
 		    			    		case 5:
-		    			    			System.out.println("Choose a Book to reserve");
-		    			    			System.out.print("Enter Membership ID : ");
-		    			    			int m_id = sc.nextInt();
-		    			    			System.out.println("Enter Book ID");
-		    			    			int b_id = sc.nextInt();
-		    			    			Reservation res = new Reservation(m_id, b_id);
-		    			    			reservationDAO.createReservation(res);
-		    			    			System.out.println("Reserved");
-		    			    			break;
+		    			    			System.out.println("Enter MembershipID: ");
+										membershipId = sc.nextInt();
+										System.out.println("Enter Book ID: ");
+										bookId = sc.nextInt();
+										
+										
+										reservationDAO.createReservation(membershipId, bookId);
 		    			    		default:
 		    			    			System.out.println("Invalid Option");	
 		    			    			
